@@ -18,22 +18,18 @@
 
 ## 📌 Overview
 
-Offline Ceph storage cluster configuration auditor (cephx, msgr2, keyrings, RGW, CephFS, dashboard)
+OCephX is an offline, read-only auditor for Ceph storage cluster configuration, parsing ceph.conf, keyrings and the text/JSON output of ceph auth, config and pool commands. It reviews cephx authentication, msgr2 secure messaging, keyring capabilities and permissions, RGW and CephFS exposure, the dashboard and data-protection settings. Secrets are masked everywhere, findings map to CWE and MITRE ATT&CK, and results roll up into an A+…F grade with hardened templates.
 
 ---
 
 ## ✨ Features
 
-- Offline, read-only parsers: ceph.conf (INI with Ceph section precedence), keyrings, `ceph auth ls/export`, `ceph config dump` (text + JSON), `ceph config-key dump`, `ceph osd pool ls detail` / `ceph osd dump` (text + JSON), RGW bucket ACL exports and /etc/fstab CephFS mounts
-- cephx — auth_*_required, signatures, global_id reclaim (CVE-2021-20288), ticket TTLs, auth debug
-- msgr2 — ms_*_mode secure, msgr1 legacy, mon_host v1-only
-- Keyrings — world/group readable, client.admin on non-admin hosts, broad caps (mon 'allow *', osd 'allow *' w/o pool), duplicated / malformed keys, bootstrap keys, inline keys
-- RGW — TLS frontends, Keystone / LDAP transport, SSE-KMS testing keys, static SSE key, anonymous (AllUsers) ACLs
-- Dashboard — SSL, password policy, lockout, JWT TTL, default / weak admin, Grafana / RGW TLS verification
-- Data protection — size / min_size, pool delete guard, size-one pools, dm-crypt hints, scrub flags, checksums
-- Secrets masked everywhere; --root offline image audits
-- Export TXT / Markdown / JSON / CSV / SARIF 2.1.0
-- Self-test --demo, CI gates --fail-on / --min-severity
+- Parses ceph.conf, keyrings and ceph auth/config/pool exports (text + JSON)
+- cephx checks: auth_*_required, signatures, global_id reclaim (CVE-2021-20288), TTLs
+- msgr2 secure-mode and legacy msgr1 detection
+- Keyring capability and world/group-readable permission analysis
+- RGW TLS/ACL, dashboard hardening and pool size/min_size data-protection checks
+- Secrets masked; hardened templates and export TXT/MD/JSON/CSV/SARIF
 
 ---
 
@@ -47,7 +43,10 @@ Offline Ceph storage cluster configuration auditor (cephx, msgr2, keyrings, RGW,
 ## 🚀 Usage
 
 ```bash
-./OCephX
+./OCephX --scan
+./OCephX /etc/ceph/ceph.conf --format json -o report.json --fail-on high
+./OCephX --root /mnt/image --scan
+./OCephX --help
 ```
 
 ---
